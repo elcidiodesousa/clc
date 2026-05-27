@@ -342,6 +342,18 @@
         .separator::before { left: 0; }
         .separator::after { right: 0; }
 
+        /* Badge de demonstração */
+        .demo-badge {
+            display: inline-block;
+            background: rgba(245, 166, 35, 0.15);
+            color: #F5A623;
+            font-size: 0.6rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            margin-left: 0.5rem;
+            font-weight: 500;
+        }
+
         @media (max-width: 900px) {
             .login-card {
                 grid-template-columns: 1fr;
@@ -411,9 +423,9 @@
                 </form>
 
                 <div class="demo-credentials">
-                    <div class="demo-title">🔑 Credenciais de demonstração</div>
+                    <div class="demo-title">🔑 Credenciais de demonstração (clique para testar)</div>
                     <div class="demo-items">
-                        <span class="demo-item" onclick="preencherDemo('admin')">👑 Admin</span>
+                        <span class="demo-item" onclick="preencherDemo('admin')">👑 Administrador</span>
                         <span class="demo-item" onclick="preencherDemo('membro')">🎭 Membro</span>
                         <span class="demo-item" onclick="preencherDemo('jurado')">⚖️ Jurado</span>
                     </div>
@@ -490,8 +502,28 @@
         </div>
     </div>
 
-    <script src="js/api.js"></script>
     <script>
+        // ============================================
+        // DEMO CREDENTIALS - FUNCIONA LOCALMENTE
+        // ============================================
+        
+        const DEMO_USERS = [
+            { email: 'admin@clc.com', senha: 'admin123', nome: 'Administrador', tipo: 'ADMIN', id: 1 },
+            { email: 'membro@clc.com', senha: '123456', nome: 'João Membro', tipo: 'MEMBRO', id: 2 },
+            { email: 'jurado@clc.com', senha: '123456', nome: 'Maria Jurada', tipo: 'JURADO', id: 3 }
+        ];
+        
+        // Mock do localStorage
+        function mockLogin(email, senha) {
+            const user = DEMO_USERS.find(u => u.email === email && u.senha === senha);
+            if (user) {
+                localStorage.setItem('token', 'demo-token-' + user.id);
+                localStorage.setItem('user', JSON.stringify(user));
+                return true;
+            }
+            return false;
+        }
+        
         function togglePassword(inputId) {
             const input = document.getElementById(inputId);
             input.type = input.type === 'password' ? 'text' : 'password';
@@ -529,6 +561,7 @@
                 document.getElementById('loginPassword').value = '123456';
             }
             
+            // Efeito visual no botão clicado
             const btn = event.target;
             const originalText = btn.textContent;
             btn.textContent = '✓ Preenchido!';
@@ -537,7 +570,7 @@
             }, 1000);
         }
         
-        // LOGIN
+        // LOGIN - Usa dados de demonstração
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -548,17 +581,25 @@
             btn.innerHTML = '<span class="spinner"></span> Entrando...';
             btn.disabled = true;
             
-            try {
-                await api.login(email, senha);
-                window.location.href = 'dashboard.html';
-            } catch (error) {
-                mostrarErro('loginErrorMessage', 'loginErrorText', error.message || 'Email ou senha inválidos');
-                btn.innerHTML = 'Entrar no Sistema';
-                btn.disabled = false;
-            }
+            // Simular delay de rede
+            setTimeout(() => {
+                try {
+                    if (mockLogin(email, senha)) {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        mostrarErro('loginErrorMessage', 'loginErrorText', '❌ Email ou senha inválidos. Use as credenciais de demonstração.');
+                        btn.innerHTML = 'Entrar no Sistema';
+                        btn.disabled = false;
+                    }
+                } catch (error) {
+                    mostrarErro('loginErrorMessage', 'loginErrorText', error.message || 'Erro ao fazer login');
+                    btn.innerHTML = 'Entrar no Sistema';
+                    btn.disabled = false;
+                }
+            }, 800);
         });
         
-        // REGISTRO
+        // REGISTRO - Simula criação de conta
         document.getElementById('registroForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -577,30 +618,39 @@
                 return;
             }
             
+            if (!nome || !email) {
+                mostrarErro('registroErrorMessage', 'registroErrorText', '❌ Preencha todos os campos');
+                return;
+            }
+            
             const btn = document.getElementById('registroBtn');
             btn.innerHTML = '<span class="spinner"></span> Criando conta...';
             btn.disabled = true;
             
-            try {
-                // 1. Criar usuário
-                const novoUsuario = await api.salvarUsuario({
-                    nome: nome,
+            // Simular criação de conta
+            setTimeout(() => {
+                // Verificar se email já existe nos demos
+                const emailExiste = DEMO_USERS.some(u => u.email === email);
+                if (emailExiste) {
+                    mostrarErro('registroErrorMessage', 'registroErrorText', '❌ Este email já está cadastrado!');
+                    btn.innerHTML = 'Criar minha conta';
+                    btn.disabled = false;
+                    return;
+                }
+                
+                // Salvar no localStorage (simulando banco)
+                const novoUsuario = {
                     email: email,
                     senha: senha,
-                    tipo: 'MEMBRO'
-                });
-                
-                console.log('Usuário criado:', novoUsuario);
-                
-                // 2. Criar membro automaticamente
-                const membroData = {
-                    usuario: { id: novoUsuario.id },
-                    dataRegistro: new Date().toISOString().split('T')[0]
+                    nome: nome,
+                    tipo: 'MEMBRO',
+                    id: Date.now()
                 };
                 
-                console.log('Dados do membro:', membroData);
-                
-                await api.salvarMembro(membroData);
+                // Armazenar usuários criados
+                let usuariosCriados = JSON.parse(localStorage.getItem('demo_usuarios') || '[]');
+                usuariosCriados.push(novoUsuario);
+                localStorage.setItem('demo_usuarios', JSON.stringify(usuariosCriados));
                 
                 mostrarSucesso('registroSuccessMessage', 'registroSuccessText', '✅ Conta criada com sucesso! Agora faça login.');
                 
@@ -611,15 +661,58 @@
                     document.querySelector('.login-side').scrollIntoView({ behavior: 'smooth' });
                 }, 500);
                 
-            } catch (error) {
-                console.error('Erro detalhado:', error);
-                let mensagem = '❌ Erro ao criar conta. ';
-                if (error.message) mensagem += error.message;
-                mostrarErro('registroErrorMessage', 'registroErrorText', mensagem);
-            } finally {
                 btn.innerHTML = 'Criar minha conta';
                 btn.disabled = false;
+            }, 1000);
+        });
+        
+        // Atualizar mockLogin para incluir usuários criados
+        const originalMockLogin = mockLogin;
+        window.mockLogin = function(email, senha) {
+            // Verificar nos usuários demo padrão
+            const demoUser = DEMO_USERS.find(u => u.email === email && u.senha === senha);
+            if (demoUser) {
+                localStorage.setItem('token', 'demo-token-' + demoUser.id);
+                localStorage.setItem('user', JSON.stringify(demoUser));
+                return true;
             }
+            
+            // Verificar nos usuários criados
+            const usuariosCriados = JSON.parse(localStorage.getItem('demo_usuarios') || '[]');
+            const createdUser = usuariosCriados.find(u => u.email === email && u.senha === senha);
+            if (createdUser) {
+                localStorage.setItem('token', 'demo-token-' + createdUser.id);
+                localStorage.setItem('user', JSON.stringify(createdUser));
+                return true;
+            }
+            
+            return false;
+        };
+        
+        // Sobrescrever a função global
+        window.mockLogin = window.mockLogin;
+        
+        // Atualizar o evento de login para usar a nova função
+        document.getElementById('loginForm').removeEventListener('submit', document.getElementById('loginForm').submit);
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const senha = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginBtn');
+            
+            btn.innerHTML = '<span class="spinner"></span> Entrando...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                if (window.mockLogin(email, senha)) {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    mostrarErro('loginErrorMessage', 'loginErrorText', '❌ Email ou senha inválidos. Use as credenciais de demonstração ou crie uma conta.');
+                    btn.innerHTML = 'Entrar no Sistema';
+                    btn.disabled = false;
+                }
+            }, 800);
         });
     </script>
 </body>
