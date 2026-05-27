@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLC System - Acesso</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 50%, #1A2B4C 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 1.5rem;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .bubble {
+            position: fixed;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-side {
+            padding: 2rem;
+            border-right: 1px solid #E8EDF2;
+        }
+
+        .register-side {
+            padding: 2rem;
+            background: #F8FAFE;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 10px 25px -5px rgba(74, 144, 226, 0.3);
+        }
+
+        .logo-icon img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+        }
+
+        .logo h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1A2B4C 0%, #4A90E2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo p {
+            color: #5A6E8A;
+            font-size: 0.7rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1A2B4C;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title span {
+            font-size: 1.25rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+            color: #1A2B4C;
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon input {
+            width: 100%;
+            padding: 0.75rem 0.85rem 0.75rem 2.2rem;
+            border: 1.5px solid #E8EDF2;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .input-icon input:focus {
+            outline: none;
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .input-icon .icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #94A3B8;
+            font-size: 1rem;
+        }
+
+        .toggle-password:hover {
+            color: #4A90E2;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px -5px rgba(74, 144, 226, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #EF4444;
+            color: #EF4444;
+            padding: 0.5rem;
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid #22C55E;
+            color: #22C55E;
+            padding: 0.5rem;
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .demo-credentials {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #E8EDF2;
+        }
+
+        .demo-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #5A6E8A;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .demo-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .demo-item {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.7rem;
+            background: #F0F4F8;
+            border-radius: 8px;
+            color: #4A90E2;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .demo-item:hover {
+            background: #4A90E2;
+            color: white;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid white;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .info-text {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.65rem;
+            color: #94A3B8;
+        }
+
+        .info-text a {
+            color: #4A90E2;
+            text-decoration: none;
+        }
+
+        .separator {
+            text-align: center;
+            margin: 1rem 0;
+            font-size: 0.7rem;
+            color: #CBD5E1;
+            position: relative;
+        }
+
+        .separator::before,
+        .separator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background: #E8EDF2;
+        }
+
+        .separator::before { left: 0; }
+        .separator::after { right: 0; }
+
+        @media (max-width: 900px) {
+            .login-card {
+                grid-template-columns: 1fr;
+            }
+            .login-side {
+                border-right: none;
+                border-bottom: 1px solid #E8EDF2;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-side, .register-side {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <div class="bubble" style="width: 100px; height: 100px; top: 5%; left: 5%;"></div>
+    <div class="bubble" style="width: 50px; height: 50px; bottom: 10%; right: 8%; animation-delay: 1s;"></div>
+    <div class="bubble" style="width: 150px; height: 150px; top: 70%; left: 90%; animation-delay: 2s;"></div>
+
+    <div class="login-container">
+        <div class="login-card">
+            <!-- LADO ESQUERDO - LOGIN -->
+            <div class="login-side">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <img src="CLC Logotipo.jpg" alt="CLC Logo" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><path fill=%22%234A90E2%22 d=%22M12 2L2 7L12 12L22 7L12 2Z%22/><path fill=%22%23357ABD%22 d=%22M2 17L12 22L22 17L12 12L2 17Z%22/></svg>'">
+                    </div>
+                    <h2>CLC System</h2>
+                    <p>Gestão de Eventos e Competições</p>
+                </div>
+
+                <div class="section-title">
+                    <span>🔐</span> Acessar sua conta
+                </div>
+
+                <div id="loginErrorMessage" class="error-message" style="display: none;">
+                    <span>⚠️</span>
+                    <span id="loginErrorText"></span>
+                </div>
+                
+                <form id="loginForm">
+                    <div class="input-group">
+                        <label>Email</label>
+                        <div class="input-icon">
+                            <span class="icon">📧</span>
+                            <input type="email" id="loginEmail" required placeholder="seu@email.com">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Senha</label>
+                        <div class="input-icon">
+                            <span class="icon">🔒</span>
+                            <input type="password" id="loginPassword" required placeholder="••••••••">
+                            <span class="toggle-password" onclick="togglePassword('loginPassword')">👁️</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary" id="loginBtn">
+                        Entrar no Sistema
+                    </button>
+                </form>
+
+                <div class="demo-credentials">
+                    <div class="demo-title">🔑 Credenciais de demonstração</div>
+                    <div class="demo-items">
+                        <span class="demo-item" onclick="preencherDemo('admin')">👑 Admin</span>
+                        <span class="demo-item" onclick="preencherDemo('membro')">🎭 Membro</span>
+                        <span class="demo-item" onclick="preencherDemo('jurado')">⚖️ Jurado</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LADO DIREITO - REGISTRO -->
+            <div class="register-side">
+                <div class="section-title">
+                    <span>✨</span> Criar nova conta
+                </div>
+
+                <div id="registroErrorMessage" class="error-message" style="display: none;">
+                    <span>⚠️</span>
+                    <span id="registroErrorText"></span>
+                </div>
+                <div id="registroSuccessMessage" class="success-message" style="display: none;">
+                    <span>✅</span>
+                    <span id="registroSuccessText"></span>
+                </div>
+                
+                <form id="registroForm">
+                    <div class="input-group">
+                        <label>Nome completo *</label>
+                        <div class="input-icon">
+                            <span class="icon">👤</span>
+                            <input type="text" id="regNome" required placeholder="Seu nome completo">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Email *</label>
+                        <div class="input-icon">
+                            <span class="icon">📧</span>
+                            <input type="email" id="regEmail" required placeholder="seu@email.com">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Senha *</label>
+                        <div class="input-icon">
+                            <span class="icon">🔒</span>
+                            <input type="password" id="regPassword" required placeholder="••••••••">
+                            <span class="toggle-password" onclick="togglePassword('regPassword')">👁️</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Confirmar senha *</label>
+                        <div class="input-icon">
+                            <span class="icon">🔒</span>
+                            <input type="password" id="regConfirmPassword" required placeholder="••••••••">
+                            <span class="toggle-password" onclick="togglePassword('regConfirmPassword')">👁️</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary" id="registroBtn">
+                        Criar minha conta
+                    </button>
+                </form>
+                
+                <div class="info-text">
+                    Ao criar uma conta, você concorda com os <a href="#">Termos de Uso</a>
+                </div>
+                
+                <div class="separator">
+                    <span>🌟</span>
+                </div>
+                
+                <div class="info-text" style="margin-top: 0.5rem;">
+                    Após criar sua conta, você poderá participar de eventos e competições.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+        
+        function mostrarErro(containerId, textId, mensagem) {
+            const container = document.getElementById(containerId);
+            const textSpan = document.getElementById(textId);
+            textSpan.textContent = mensagem;
+            container.style.display = 'flex';
+            setTimeout(() => {
+                container.style.display = 'none';
+            }, 4000);
+        }
+        
+        function mostrarSucesso(containerId, textId, mensagem) {
+            const container = document.getElementById(containerId);
+            const textSpan = document.getElementById(textId);
+            textSpan.textContent = mensagem;
+            container.style.display = 'flex';
+            setTimeout(() => {
+                container.style.display = 'none';
+            }, 4000);
+        }
+        
+        function preencherDemo(tipo) {
+            if (tipo === 'admin') {
+                document.getElementById('loginEmail').value = 'admin@clc.com';
+                document.getElementById('loginPassword').value = 'admin123';
+            } else if (tipo === 'membro') {
+                document.getElementById('loginEmail').value = 'membro@clc.com';
+                document.getElementById('loginPassword').value = '123456';
+            } else if (tipo === 'jurado') {
+                document.getElementById('loginEmail').value = 'jurado@clc.com';
+                document.getElementById('loginPassword').value = '123456';
+            }
+            
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Preenchido!';
+            setTimeout(() => {
+                btn.textContent = originalText;
+            }, 1000);
+        }
+        
+        // LOGIN
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const senha = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginBtn');
+            
+            btn.innerHTML = '<span class="spinner"></span> Entrando...';
+            btn.disabled = true;
+            
+            try {
+                await api.login(email, senha);
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                mostrarErro('loginErrorMessage', 'loginErrorText', error.message || 'Email ou senha inválidos');
+                btn.innerHTML = 'Entrar no Sistema';
+                btn.disabled = false;
+            }
+        });
+        
+        // REGISTRO
+        document.getElementById('registroForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nome = document.getElementById('regNome').value;
+            const email = document.getElementById('regEmail').value;
+            const senha = document.getElementById('regPassword').value;
+            const confirmSenha = document.getElementById('regConfirmPassword').value;
+            
+            if (senha !== confirmSenha) {
+                mostrarErro('registroErrorMessage', 'registroErrorText', '❌ As senhas não coincidem');
+                return;
+            }
+            
+            if (senha.length < 4) {
+                mostrarErro('registroErrorMessage', 'registroErrorText', '❌ A senha deve ter pelo menos 4 caracteres');
+                return;
+            }
+            
+            const btn = document.getElementById('registroBtn');
+            btn.innerHTML = '<span class="spinner"></span> Criando conta...';
+            btn.disabled = true;
+            
+            try {
+                // 1. Criar usuário
+                const novoUsuario = await api.salvarUsuario({
+                    nome: nome,
+                    email: email,
+                    senha: senha,
+                    tipo: 'MEMBRO'
+                });
+                
+                console.log('Usuário criado:', novoUsuario);
+                
+                // 2. Criar membro automaticamente
+                const membroData = {
+                    usuario: { id: novoUsuario.id },
+                    dataRegistro: new Date().toISOString().split('T')[0]
+                };
+                
+                console.log('Dados do membro:', membroData);
+                
+                await api.salvarMembro(membroData);
+                
+                mostrarSucesso('registroSuccessMessage', 'registroSuccessText', '✅ Conta criada com sucesso! Agora faça login.');
+                
+                document.getElementById('registroForm').reset();
+                document.getElementById('loginEmail').value = email;
+                
+                setTimeout(() => {
+                    document.querySelector('.login-side').scrollIntoView({ behavior: 'smooth' });
+                }, 500);
+                
+            } catch (error) {
+                console.error('Erro detalhado:', error);
+                let mensagem = '❌ Erro ao criar conta. ';
+                if (error.message) mensagem += error.message;
+                mostrarErro('registroErrorMessage', 'registroErrorText', mensagem);
+            } finally {
+                btn.innerHTML = 'Criar minha conta';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

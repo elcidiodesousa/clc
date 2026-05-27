@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | CLC System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #F0F4F8;
+            color: #1A2B4C;
+            line-height: 1.5;
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100%;
+            background: #FFFFFF;
+            color: #1A2B4C;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+            box-shadow: 0 0 40px rgba(0,0,0,0.03);
+            border-right: 1px solid #E8EDF2;
+        }
+
+        .sidebar-header {
+            padding: 1.75rem 1.5rem;
+            border-bottom: 1px solid #E8EDF2;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+        }
+
+        /* LOGO - TAMANHO FIXO */
+        .logo-wrapper {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 14px rgba(74, 144, 226, 0.25);
+        }
+
+        .logo-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .sidebar-logo h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #1A2B4C 0%, #4A90E2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .sidebar-nav {
+            padding: 1.5rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.75rem 1rem;
+            color: #5A6E8A;
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 0.25rem;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: rgba(74, 144, 226, 0.08);
+            color: #4A90E2;
+        }
+
+        .nav-item.active {
+            background: rgba(74, 144, 226, 0.12);
+            color: #4A90E2;
+        }
+
+        .nav-icon {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .nav-divider {
+            height: 1px;
+            background: #E8EDF2;
+            margin: 1rem 0;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+
+        /* ========== NAVBAR ========== */
+        .navbar {
+            background: #FFFFFF;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #E8EDF2;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #1A2B4C;
+        }
+
+        .menu-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .navbar-title h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1A2B4C;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-greeting {
+            color: #5A6E8A;
+            font-size: 0.875rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        /* ========== CONTAINER ========== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* ========== WELCOME BANNER ========== */
+        .welcome-banner {
+            background: linear-gradient(135deg, #4A90E2 0%, #F5A623 100%);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -5%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .welcome-banner h2 {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-banner p {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.875rem;
+        }
+
+        /* ========== STATS GRID ========== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid #E8EDF2;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 30px -15px rgba(0,0,0,0.08);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(74, 144, 226, 0.1);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: #4A90E2;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .stat-trend {
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+        }
+
+        .stat-trend.positive {
+            background: rgba(245, 166, 35, 0.12);
+            color: #F5A623;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1A2B4C;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #5A6E8A;
+        }
+
+        /* ========== CHARTS GRID ========== */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid #E8EDF2;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-header h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1A2B4C;
+        }
+
+        .chart-date {
+            font-size: 0.7rem;
+            color: #5A6E8A;
+            background: #F0F4F8;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
+
+        /* ========== ACTIVITY CARD ========== */
+        .activity-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid #E8EDF2;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .activity-header h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1A2B4C;
+        }
+
+        .event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.875rem;
+            background: #F8FAFE;
+            border-radius: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .event-item:hover {
+            background: #F0F4F8;
+        }
+
+        .event-date {
+            min-width: 70px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #4A90E2;
+        }
+
+        .event-info {
+            flex: 1;
+        }
+
+        .event-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #1A2B4C;
+            margin-bottom: 0.125rem;
+        }
+
+        .event-location {
+            font-size: 0.7rem;
+            color: #5A6E8A;
+        }
+
+        .event-status {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(245, 166, 35, 0.12);
+            border-radius: 20px;
+            color: #F5A623;
+        }
+
+        /* ========== QUICK ACTIONS ========== */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .quick-action-btn {
+            background: #F8FAFE;
+            border: 1px solid #E8EDF2;
+            border-radius: 14px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-action-btn:hover {
+            background: #F0F4F8;
+            transform: translateY(-2px);
+            border-color: #4A90E2;
+        }
+
+        .quick-action-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-action-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: #4A90E2;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .quick-action-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #1A2B4C;
+        }
+
+        /* ========== TOAST ========== */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1A2B4C;
+            color: #fff;
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            z-index: 3000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .menu-btn {
+                display: block;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <div class="logo-wrapper">
+                    <div class="logo-icon">
+                        <img src="CLC Logotipo.jpg" alt="" style="height: 150%; border-radius: 50%;">
+                    </div>
+                </div>
+                <h2 style="margin-left: 5%;">CLC System</h2>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item active">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M3 9L12 3L21 9L12 15L3 9Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                        <path d="M5 12V17L12 21L19 17V12" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                        <path d="M12 15V21" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M9 10.5L12 12L15 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <span>Dashboard</span>
+            </a>
+            <a href="eventos.html" class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M12 8V12L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M4 4L8 8" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M20 4L16 8" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                </span>
+                <span>Eventos</span>
+            </a>
+            <a href="inscricoes.html" class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M16 3.13C17.9 3.61 19.2 5.41 19.2 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <span>Inscrições</span>
+            </a>
+            <a href="avaliacoes.html" class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <span>Avaliações</span>
+            </a>
+            <a href="perfil.html" class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M5 20V19C5 15.1 8.1 12 12 12C15.9 12 19 15.1 19 19V20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M19 4.5C20.2 5.2 21 6.5 21 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <span>Perfil</span>
+            </a>
+            <div class="nav-divider"></div>
+            <a href="#" onclick="api.logout()" class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M9 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 12H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <span>Sair</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="navbar">
+            <button class="menu-btn" onclick="toggleSidebar()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <div class="navbar-title">
+                <h1>Dashboard</h1>
+            </div>
+            <div class="user-info">
+                <span class="user-greeting" id="userGreeting">Olá, Visitante</span>
+                <div class="user-avatar" id="userAvatar">👤</div>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <h2 id="welcomeMessage">Bem-vindo de volta!</h2>
+                <p>Aqui está o resumo completo das atividades do sistema CLC</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M8 2V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M16 2V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">--</div>
+                    <div class="stat-label">Eventos</div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Evolução das Avaliações</h3>
+                        <span class="chart-date">Últimos 6 meses</span>
+                    </div>
+                    <canvas id="avaliacoesChart" style="max-height: 280px;"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Eventos por Categoria</h3>
+                        <span class="chart-date">Distribuição</span>
+                    </div>
+                    <canvas id="categoriasChart" style="max-height: 280px;"></canvas>
+                </div>
+            </div>
+
+            <!-- Activity & Quick Actions -->
+            <div style="display: grid; gap: 1.5rem;">
+                <div class="activity-card">
+                    <div class="activity-header">
+                        <h3>Próximos Eventos</h3>
+                        <span class="chart-date" id="eventosCount">Carregando</span>
+                    </div>
+                    <div id="proximosEventos" class="event-list">
+                        <div style="text-align: center; padding: 2rem;">Carregando...</div>
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <div class="activity-header">
+                        <h3>Ações Rápidas</h3>
+                    </div>
+                    <div class="quick-actions">
+                        <div class="quick-action-btn" onclick="window.location.href='eventos.html'">
+                            <div class="quick-action-icon">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 5V19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <path d="M5 12H19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div class="quick-action-label">Novo Evento</div>
+                        </div>
+                        <div class="quick-action-btn" onclick="window.location.href='inscricoes.html'">
+                            <div class="quick-action-icon">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M20 12V18H4V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <path d="M12 2V12M12 12L9 9M12 12L15 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="quick-action-label">Nova Inscrição</div>
+                        </div>
+                        <div class="quick-action-btn" onclick="window.location.href='avaliacoes.html'">
+                            <div class="quick-action-icon">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="quick-action-label">Avaliar</div>
+                        </div>
+                        <div class="quick-action-btn" onclick="window.location.href='eventos.html'">
+                            <div class="quick-action-icon">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M21 12C21 13.2 20.5 14.2 19.7 15.1C18.9 15.9 17.8 16.5 16.5 16.8C15.2 17.1 13.8 17.1 12.3 16.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <path d="M3 12C3 10.8 3.5 9.8 4.3 8.9C5.1 8 6.2 7.4 7.5 7.1C8.8 6.8 10.2 6.8 11.7 7.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <path d="M12 2L15 5L12 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="quick-action-label">Relatórios</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        let avaliacoesChart, categoriasChart;
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        function getGreeting() {
+            const hour = new Date().getHours();
+            if (hour < 12) return 'Bom dia';
+            if (hour < 18) return 'Boa tarde';
+            return 'Boa noite';
+        }
+
+        function formatarData(dataString) {
+            if (!dataString) return 'Data não definida';
+            try {
+                const data = new Date(dataString);
+                return data.toLocaleDateString('pt-BR');
+            } catch {
+                return dataString;
+            }
+        }
+
+        function mostrarToast(mensagem, tipo = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = mensagem;
+            toast.style.background = tipo === 'success' ? '#22C55E' : '#EF4444';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        async function carregarDashboard() {
+            try {
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                const userName = user.nome?.split(' ')[0] || 'Visitante';
+                
+                document.getElementById('userGreeting').innerHTML = `${getGreeting()}, ${userName}`;
+                document.getElementById('welcomeMessage').innerHTML = `${getGreeting()}, ${userName}!`;
+                document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
+
+                const [stats, eventos, categorias, avaliacoes, inscricoes] = await Promise.all([
+                    api.getDashboardStats(),
+                    api.getEventos(),
+                    api.getCategorias(),
+                    api.getAvaliacoes(),
+                    api.getInscricoes()
+                ]);
+
+                const statsGrid = document.getElementById('statsGrid');
+                const statsData = [
+                    { value: stats.eventos || 0, label: 'Eventos', trend: '+12%', trendPositive: true },
+                    { value: stats.participantes || 0, label: 'Participantes', trend: '+8%', trendPositive: true },
+                    { value: stats.avaliacoes || 0, label: 'Avaliações', trend: '+15%', trendPositive: true },
+                    { value: stats.mediaGeral || 0, label: 'Média Geral', trend: stats.mediaGeral >= 7 ? 'Excelente' : 'Regular', trendPositive: stats.mediaGeral >= 7 }
+                ];
+
+                const statIcons = [
+                    '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M8 2V6" stroke="currentColor" stroke-width="1.5"/><path d="M16 2V6" stroke="currentColor" stroke-width="1.5"/></svg>',
+                    '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M5 20V19C5 15.1 8.1 12 12 12C15.9 12 19 15.1 19 19V20" stroke="currentColor" stroke-width="1.5"/></svg>',
+                    '<svg viewBox="0 0 24 24" fill="none"><path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z" stroke="currentColor" stroke-width="1.5"/></svg>',
+                    '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M12 8V12L14 14" stroke="currentColor" stroke-width="1.5"/></svg>'
+                ];
+
+                statsGrid.innerHTML = statsData.map((stat, index) => `
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">${statIcons[index]}</div>
+                            <span class="stat-trend ${stat.trendPositive ? 'positive' : ''}">${stat.trend}</span>
+                        </div>
+                        <div class="stat-value">${stat.value}</div>
+                        <div class="stat-label">${stat.label}</div>
+                    </div>
+                `).join('');
+
+                const hoje = new Date();
+                const proximos = eventos
+                    .filter(e => new Date(e.data) >= hoje)
+                    .sort((a, b) => new Date(a.data) - new Date(b.data))
+                    .slice(0, 5);
+
+                document.getElementById('eventosCount').textContent = `${proximos.length} eventos futuros`;
+
+                const eventosHtml = proximos.length > 0 
+                    ? proximos.map(e => `
+                        <div class="event-item">
+                            <div class="event-date">${formatarData(e.data)}</div>
+                            <div class="event-info">
+                                <div class="event-name">${e.nome || 'Evento'}</div>
+                                <div class="event-location">${e.local || 'Local a definir'}</div>
+                            </div>
+                            <div class="event-status">Em breve</div>
+                        </div>
+                    `).join('')
+                    : '<div style="text-align: center; padding: 2rem; color: #5A6E8A;">Nenhum evento futuro agendado</div>';
+
+                document.getElementById('proximosEventos').innerHTML = eventosHtml;
+
+                if (avaliacoesChart) avaliacoesChart.destroy();
+                if (categoriasChart) categoriasChart.destroy();
+
+                const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+                const notasMock = [7.2, 7.5, 7.8, 8.0, 8.2, 8.1, 8.4, 8.3, 8.6, 8.5, 8.7, 8.8];
+                
+                const ctxAvaliacoes = document.getElementById('avaliacoesChart').getContext('2d');
+                avaliacoesChart = new Chart(ctxAvaliacoes, {
+                    type: 'line',
+                    data: {
+                        labels: meses,
+                        datasets: [{
+                            label: 'Média de Notas',
+                            data: notasMock,
+                            borderColor: '#4A90E2',
+                            backgroundColor: 'rgba(74, 144, 226, 0.05)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#4A90E2',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 3,
+                            pointHoverRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { min: 6, max: 10, grid: { color: '#E8EDF2' } } }
+                    }
+                });
+
+                const catCount = {};
+                categorias.forEach(c => { catCount[c.nome] = (catCount[c.nome] || 0) + 1; });
+                const catLabels = Object.keys(catCount).length ? Object.keys(catCount) : ['Música', 'Dança', 'Teatro', 'Artes Visuais'];
+                const catData = Object.values(catCount).length ? Object.values(catCount) : [8, 6, 4, 5];
+
+                const ctxCategorias = document.getElementById('categoriasChart').getContext('2d');
+                categoriasChart = new Chart(ctxCategorias, {
+                    type: 'doughnut',
+                    data: {
+                        labels: catLabels,
+                        datasets: [{
+                            data: catData,
+                            backgroundColor: ['#4A90E2', '#F5A623', '#357ABD', '#E8851E'],
+                            borderWidth: 0,
+                            hoverOffset: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } } },
+                        cutout: '60%'
+                    }
+                });
+
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+                mostrarToast('Erro ao carregar dados do dashboard', 'error');
+            }
+        }
+
+        carregarDashboard();
+    </script>
+</body>
+</html>

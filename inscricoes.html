@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscrições | CLC System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #F0F4F8; color: #1A2B4C; }
+
+        /* Sidebar (mesmo estilo do dashboard) */
+        .sidebar {
+            position: fixed; left: 0; top: 0; width: 280px; height: 100%;
+            background: #FFFFFF; transition: transform 0.3s ease; z-index: 1000;
+            border-right: 1px solid #E8EDF2;
+        }
+        .sidebar-header { padding: 1.75rem 1.5rem; border-bottom: 1px solid #E8EDF2; }
+        .sidebar-logo { display: flex; align-items: center; gap: 0.875rem; }
+        .logo-wrapper { width: 48px; height: 48px; min-width: 48px; }
+        .logo-icon { width: 48px; height: 48px; background: linear-gradient(135deg, #4A90E2, #357ABD); border-radius: 14px; display: flex; align-items: center; justify-content: center; }
+        .logo-icon img { width: 90%; height: 90%; object-fit: cover; border-radius: 10px; }
+        .sidebar-logo h2 { font-size: 1.35rem; font-weight: 700; background: linear-gradient(135deg, #1A2B4C, #4A90E2); -webkit-background-clip: text; background-clip: text; color: transparent; margin-left: 10%; }
+        .sidebar-nav { padding: 1.5rem; }
+        .nav-item { display: flex; align-items: center; gap: 0.875rem; padding: 0.75rem 1rem; color: #5A6E8A; text-decoration: none; border-radius: 12px; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500; }
+        .nav-item:hover { background: rgba(74, 144, 226, 0.08); color: #4A90E2; }
+        .nav-item.active { background: rgba(74, 144, 226, 0.12); color: #4A90E2; }
+        .nav-icon svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 1.5; fill: none; }
+        .nav-divider { height: 1px; background: #E8EDF2; margin: 1rem 0; }
+
+        .main-content { margin-left: 280px; min-height: 100vh; }
+        .navbar { background: #FFFFFF; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E8EDF2; position: sticky; top: 0; }
+        .menu-btn { display: none; background: none; border: none; cursor: pointer; }
+        .menu-btn svg { width: 24px; height: 24px; }
+        .navbar-title h1 { font-size: 1.5rem; font-weight: 700; }
+        .user-info { display: flex; align-items: center; gap: 1rem; }
+        .user-greeting { color: #5A6E8A; font-size: 0.875rem; }
+        .user-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #4A90E2, #357ABD); border-radius: 40px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .page-title h1 { font-size: 1.5rem; font-weight: 700; }
+        .page-title p { color: #5A6E8A; font-size: 0.875rem; margin-top: 0.25rem; }
+
+        .stats-mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .stat-mini-card { background: #fff; border-radius: 16px; padding: 1rem; text-align: center; border: 1px solid #E8EDF2; }
+        .stat-mini-value { font-size: 1.5rem; font-weight: 700; color: #4A90E2; }
+        .stat-mini-label { font-size: 0.7rem; color: #5A6E8A; margin-top: 0.25rem; }
+
+        .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid #E8EDF2; }
+        .tab { padding: 0.75rem 1.5rem; background: none; border: none; font-weight: 600; color: #5A6E8A; cursor: pointer; position: relative; }
+        .tab.active { color: #4A90E2; }
+        .tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: #4A90E2; }
+
+        .inscricoes-list { display: flex; flex-direction: column; gap: 1rem; }
+        .inscricao-item { background: #fff; border-radius: 16px; padding: 1.25rem; border-left: 4px solid #4A90E2; transition: all 0.2s; }
+        .inscricao-item:hover { transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .inscricao-header { display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; margin-bottom: 0.75rem; }
+        .inscricao-title { font-weight: 700; font-size: 1rem; }
+        .inscricao-categoria { font-size: 0.7rem; color: #4A90E2; margin-top: 0.25rem; }
+        .inscricao-details { display: flex; flex-wrap: wrap; gap: 1rem; margin: 0.75rem 0; font-size: 0.7rem; color: #5A6E8A; }
+        .status-badge { display: inline-flex; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+        .status-pendente { background: rgba(245, 166, 35, 0.12); color: #F5A623; }
+        .status-confirmada { background: rgba(34, 197, 94, 0.12); color: #22C55E; }
+        .status-cancelada { background: rgba(239, 68, 68, 0.12); color: #EF4444; }
+
+        .btn-primary { background: #4A90E2; color: white; border: none; padding: 0.625rem 1.25rem; border-radius: 12px; font-weight: 500; cursor: pointer; }
+        .btn-outline { background: transparent; border: 1px solid #E8EDF2; padding: 0.5rem 1rem; border-radius: 10px; cursor: pointer; }
+        .btn-danger { background: transparent; border: 1px solid #EF4444; color: #EF4444; padding: 0.5rem 1rem; border-radius: 10px; cursor: pointer; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { background: #fff; border-radius: 24px; max-width: 500px; width: 90%; padding: 1.5rem; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .modal-header h3 { font-size: 1.25rem; font-weight: 600; }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+        .input-group { margin-bottom: 1rem; }
+        .input-group label { display: block; font-size: 0.75rem; font-weight: 500; margin-bottom: 0.5rem; }
+        .input-group select { width: 100%; padding: 0.75rem; border: 1px solid #E8EDF2; border-radius: 12px; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; }
+
+        .empty-state { text-align: center; padding: 3rem; background: #fff; border-radius: 20px; }
+        .toast { position: fixed; bottom: 2rem; right: 2rem; background: #1A2B4C; color: #fff; padding: 0.75rem 1.25rem; border-radius: 12px; z-index: 3000; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .menu-btn { display: block; }
+            .stats-mini { grid-template-columns: 1fr; }
+            .container { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <div class="logo-wrapper"><div class="logo-icon"><img src="CLC Logotipo.jpg" alt="CLC Logo"></div></div>
+                <h2>CLC System</h2>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9L12 3L21 9L12 15L3 9Z" stroke="currentColor" stroke-width="1.5"/><path d="M5 12V17L12 21L19 17V12" stroke="currentColor" stroke-width="1.5"/><path d="M12 15V21" stroke="currentColor" stroke-width="1.5"/></svg></span><span>Dashboard</span></a>
+            <a href="eventos.html" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M12 8V12L14 14" stroke="currentColor" stroke-width="1.5"/></svg></span><span>Eventos</span></a>
+            <a href="inscricoes.html" class="nav-item active"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/></svg></span><span>Inscrições</span></a>
+            <a href="avaliacoes.html" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z" stroke="currentColor" stroke-width="1.5"/></svg></span><span>Avaliações</span></a>
+            <a href="perfil.html" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M5 20V19C5 15.1 8.1 12 12 12C15.9 12 19 15.1 19 19V20" stroke="currentColor" stroke-width="1.5"/></svg></span><span>Perfil</span></a>
+            <div class="nav-divider"></div>
+            <a href="#" onclick="api.logout()" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H9" stroke="currentColor" stroke-width="1.5"/><path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="1.5"/><path d="M21 12H9" stroke="currentColor" stroke-width="1.5"/></svg></span><span>Sair</span></a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="navbar">
+            <button class="menu-btn" onclick="toggleSidebar()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-linecap="round"/></svg></button>
+            <div class="navbar-title"><h1>Inscrições</h1></div>
+            <div class="user-info"><span class="user-greeting" id="userGreeting">Olá, Visitante</span><div class="user-avatar" id="userAvatar">U</div></div>
+        </div>
+
+        <div class="container">
+            <div class="page-header"><div class="page-title"><h1>Minhas Inscrições</h1><p>Gerencie suas participações nos eventos</p></div><button class="btn-primary" onclick="abrirModalInscricao()">+ Nova Inscrição</button></div>
+
+            <div class="stats-mini"><div class="stat-mini-card"><div class="stat-mini-value" id="totalInscricoes">0</div><div class="stat-mini-label">Total</div></div><div class="stat-mini-card"><div class="stat-mini-value" id="inscricoesAtivas">0</div><div class="stat-mini-label">Ativas</div></div><div class="stat-mini-card"><div class="stat-mini-value" id="mediaNotas">0.0</div><div class="stat-mini-label">Média</div></div></div>
+
+            <div class="tabs"><button class="tab active" onclick="mudarTab('todas')">Todas</button><button class="tab" onclick="mudarTab('pendente')">Pendentes</button><button class="tab" onclick="mudarTab('confirmada')">Confirmadas</button></div>
+
+            <div id="inscricoesContainer" class="inscricoes-list"><div style="text-align:center;padding:2rem;">Carregando...</div></div>
+        </div>
+    </div>
+
+    <div id="modalInscricao" class="modal"><div class="modal-content"><div class="modal-header"><h3>Nova Inscrição</h3><button class="modal-close" onclick="fecharModalInscricao()">&times;</button></div><form id="inscricaoForm"><div class="input-group"><label>Evento</label><select id="selectEvento" required onchange="carregarCategorias()"></select></div><div class="input-group"><label>Categoria</label><select id="selectCategoria" required></select></div><div class="modal-footer"><button type="button" class="btn-outline" onclick="fecharModalInscricao()">Cancelar</button><button type="submit" class="btn-primary">Confirmar</button></div></form></div></div>
+
+    <script src="js/api.js"></script>
+    <script>
+        let todasInscricoes = [], membroLogado = null, tabAtual = 'todas';
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+        function mostrarToast(msg, tipo) { const t=document.createElement('div'); t.className='toast'; t.textContent=msg; t.style.background=tipo==='success'?'#22C55E':'#EF4444'; document.body.appendChild(t); setTimeout(()=>t.remove(),3000); }
+        async function carregarMembro() { const user=JSON.parse(localStorage.getItem('user')||'{}'); const membros=await api.getMembros(); membroLogado=membros.find(m=>m.usuario?.id===user.id); }
+        async function carregarInscricoes() { if(!membroLogado) await carregarMembro(); if(!membroLogado) { document.getElementById('inscricoesContainer').innerHTML='<div class="empty-state"><h3>Acesso restrito a membros</h3></div>'; return; } try { todasInscricoes=await api.getInscricoesPorMembro(membroLogado.id); atualizarStats(); renderizarInscricoes(); } catch(e){ console.error(e); } }
+        function atualizarStats() { document.getElementById('totalInscricoes').textContent=todasInscricoes.length; document.getElementById('inscricoesAtivas').textContent=todasInscricoes.filter(i=>i.status!=='cancelada').length; let soma=0,count=0; todasInscricoes.forEach(i=>{if(i.nota){soma+=i.nota;count++;}}); document.getElementById('mediaNotas').textContent=count>0?(soma/count).toFixed(1):'0.0'; }
+        function mudarTab(tab) { tabAtual=tab; document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); event.target.classList.add('active'); renderizarInscricoes(); }
+        function renderizarInscricoes() { let filtered=todasInscricoes; if(tabAtual!=='todas') filtered=filtered.filter(i=>i.status===tabAtual); if(filtered.length===0){ document.getElementById('inscricoesContainer').innerHTML='<div class="empty-state"><h3>Nenhuma inscrição</h3></div>'; return; } document.getElementById('inscricoesContainer').innerHTML=filtered.map(i=>`<div class="inscricao-item"><div class="inscricao-header"><div><div class="inscricao-title">${i.evento?.nome||'Evento'}</div><div class="inscricao-categoria">${i.categoria?.nome||'Geral'}</div></div><span class="status-badge status-${i.status||'pendente'}">${i.status||'Pendente'}</span></div><div class="inscricao-details"><span>📅 ${formatarData(i.dataInscricao)}</span><span>📍 ${i.evento?.local||'Local a definir'}</span></div>${i.status==='pendente'?`<button class="btn-danger" onclick="cancelarInscricao(${i.idInscricao})">Cancelar</button>`:''}</div>`).join(''); }
+        async function cancelarInscricao(id){ if(confirm('Cancelar inscrição?')){ await api.deletarInscricao(id); mostrarToast('Cancelada!'); carregarInscricoes(); } }
+        async function abrirModalInscricao(){ if(!membroLogado) await carregarMembro(); const eventos=await api.getEventos(); const select=document.getElementById('selectEvento'); select.innerHTML='<option value="">Selecione</option>'+eventos.map(e=>`<option value="${e.idEvento}">${e.nome}</option>`).join(''); document.getElementById('modalInscricao').style.display='flex'; }
+        async function carregarCategorias(){ const eventoId=document.getElementById('selectEvento').value; if(!eventoId) return; const cats=await api.getCategoriasPorEvento(eventoId); const select=document.getElementById('selectCategoria'); select.innerHTML=cats.map(c=>`<option value="${c.idCategoria}">${c.nome}</option>`).join(''); }
+        function fecharModalInscricao(){ document.getElementById('modalInscricao').style.display='none'; }
+        document.getElementById('inscricaoForm').addEventListener('submit',async(e)=>{ e.preventDefault(); const inscricao={ membro:{id:membroLogado.id}, evento:{idEvento:parseInt(document.getElementById('selectEvento').value)}, categoria:{idCategoria:parseInt(document.getElementById('selectCategoria').value)}, dataInscricao:new Date().toISOString().split('T')[0] }; await api.salvarInscricao(inscricao); mostrarToast('Inscrição realizada!'); fecharModalInscricao(); carregarInscricoes(); });
+        function formatarData(d){ if(!d) return '---'; try{ return new Date(d).toLocaleDateString('pt-BR'); }catch{ return d; } }
+        const user=JSON.parse(localStorage.getItem('user')||'{}'); document.getElementById('userGreeting').innerHTML=`Olá, ${user.nome?.split(' ')[0]||'Visitante'}`; document.getElementById('userAvatar').textContent=(user.nome?.charAt(0)||'U').toUpperCase();
+        carregarInscricoes();
+    </script>
+</body>
+</html>

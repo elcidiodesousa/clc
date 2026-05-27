@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil | CLC System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #F0F4F8; color: #1A2B4C; }
+        .sidebar { position: fixed; left: 0; top: 0; width: 280px; height: 100%; background: #FFFFFF; border-right: 1px solid #E8EDF2; transition: transform 0.3s; z-index: 1000; }
+        .sidebar-header { padding: 1.75rem 1.5rem; border-bottom: 1px solid #E8EDF2; }
+        .sidebar-logo { display: flex; align-items: center; gap: 0.875rem; }
+        .logo-wrapper { width: 48px; height: 48px; }
+        .logo-icon { width: 48px; height: 48px; background: linear-gradient(135deg, #4A90E2, #357ABD); border-radius: 14px; display: flex; align-items: center; justify-content: center; }
+        .logo-icon img { width: 90%; height: 90%; border-radius: 10px; }
+        .sidebar-logo h2 { font-size: 1.35rem; font-weight: 700; background: linear-gradient(135deg, #1A2B4C, #4A90E2); -webkit-background-clip: text; background-clip: text; color: transparent; margin-left: 10%; }
+        .sidebar-nav { padding: 1.5rem; }
+        .nav-item { display: flex; align-items: center; gap: 0.875rem; padding: 0.75rem 1rem; color: #5A6E8A; text-decoration: none; border-radius: 12px; font-size: 0.875rem; font-weight: 500; }
+        .nav-item:hover { background: rgba(74, 144, 226, 0.08); color: #4A90E2; }
+        .nav-item.active { background: rgba(74, 144, 226, 0.12); color: #4A90E2; }
+        .nav-icon svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 1.5; fill: none; }
+        .nav-divider { height: 1px; background: #E8EDF2; margin: 1rem 0; }
+        .main-content { margin-left: 280px; min-height: 100vh; }
+        .navbar { background: #FFFFFF; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E8EDF2; position: sticky; top: 0; }
+        .menu-btn { display: none; background: none; border: none; cursor: pointer; }
+        .menu-btn svg { width: 24px; height: 24px; }
+        .navbar-title h1 { font-size: 1.5rem; font-weight: 700; }
+        .user-info { display: flex; align-items: center; gap: 1rem; }
+        .user-greeting { color: #5A6E8A; font-size: 0.875rem; }
+        .user-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #4A90E2, #357ABD); border-radius: 40px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .profile-cover { background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%); border-radius: 24px; padding: 2rem; margin-bottom: 2rem; position: relative; overflow: hidden; }
+        .profile-cover::before { content: ''; position: absolute; top: -50%; right: -10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); border-radius: 50%; }
+        .profile-avatar { width: 80px; height: 80px; background: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 1rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
+        .profile-name { font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 0.25rem; }
+        .profile-email { color: rgba(255,255,255,0.8); font-size: 0.875rem; }
+        .profile-stats { display: flex; gap: 2rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .profile-stat { text-align: center; color: white; }
+        .profile-stat-value { font-size: 1.5rem; font-weight: 700; }
+        .profile-stat-label { font-size: 0.7rem; opacity: 0.8; }
+        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .info-card { background: #fff; border-radius: 20px; padding: 1.5rem; border: 1px solid #E8EDF2; }
+        .info-card-title { font-weight: 600; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #E8EDF2; display: flex; justify-content: space-between; align-items: center; }
+        .info-row { display: flex; padding: 0.5rem 0; border-bottom: 1px solid #F0F4F8; }
+        .info-label { width: 100px; font-weight: 600; color: #5A6E8A; font-size: 0.75rem; }
+        .info-value { flex: 1; color: #1A2B4C; font-size: 0.875rem; }
+        .badge-membro { background: linear-gradient(135deg, #22C55E, #16A34A); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.7rem; display: inline-block; }
+        .progress-section { margin-top: 1rem; }
+        .progress-item { margin-bottom: 1rem; }
+        .progress-header { display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 0.25rem; }
+        .progress-bar { height: 6px; background: #E8EDF2; border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #4A90E2, #F5A623); border-radius: 10px; transition: width 0.5s; }
+        .btn-outline { background: transparent; border: 1px solid #E8EDF2; padding: 0.25rem 0.75rem; border-radius: 8px; font-size: 0.7rem; cursor: pointer; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { background: #fff; border-radius: 24px; max-width: 500px; width: 90%; padding: 1.5rem; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .modal-header h3 { font-size: 1.25rem; font-weight: 600; }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+        .input-group { margin-bottom: 1rem; }
+        .input-group label { display: block; font-size: 0.75rem; font-weight: 500; margin-bottom: 0.5rem; }
+        .input-group input { width: 100%; padding: 0.75rem; border: 1px solid #E8EDF2; border-radius: 12px; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; }
+        .btn-primary { background: #4A90E2; color: white; border: none; padding: 0.625rem 1.25rem; border-radius: 12px; font-weight: 500; cursor: pointer; }
+        .toast { position: fixed; bottom: 2rem; right: 2rem; background: #1A2B4C; color: #fff; padding: 0.75rem 1.25rem; border-radius: 12px; z-index: 3000; animation: slideIn 0.3s; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+        @media (max-width: 768px) { .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); } .main-content { margin-left: 0; } .menu-btn { display: block; } .info-grid { grid-template-columns: 1fr; } .profile-stats { gap: 1rem; } .container { padding: 1rem; } }
+    </style>
+</head>
+<body>
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header"><div class="sidebar-logo"><div class="logo-wrapper"><div class="logo-icon"><img src="CLC Logotipo.jpg" alt="CLC Logo"></div></div><h2>CLC System</h2></div></div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9L12 3L21 9L12 15L3 9Z" stroke="currentColor" stroke-width="1.5"/><path d="M5 12V17L12 21L19 17V12" stroke="currentColor" stroke-width="1.5"/><path d="M12 15V21" stroke="currentColor" stroke-width="1.5"/></svg></span><span>Dashboard</span></a>
+            <a href="eventos.html" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M12 8V12L14 14" stroke="currentColor" stroke-width="1.5"/></svg></span><span>Eventos</span></a>
+            <a href="inscricoes.html" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/></svg></span><span>Inscrições</span></a>
+            <a href="avaliacoes.html" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z" stroke="currentColor" stroke-width="1.5"/></svg></span><span>Avaliações</span></a>
+            <a href="perfil.html" class="nav-item active"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M5 20V19C5 15.1 8.1 12 12 12C15.9 12 19 15.1 19 19V20" stroke="currentColor" stroke-width="1.5"/></svg></span><span>Perfil</span></a>
+            <div class="nav-divider"></div><a href="#" onclick="api.logout()" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H9" stroke="currentColor" stroke-width="1.5"/><path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="1.5"/><path d="M21 12H9" stroke="currentColor" stroke-width="1.5"/></svg></span><span>Sair</span></a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="navbar">
+            <button class="menu-btn" onclick="toggleSidebar()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-linecap="round"/></svg></button>
+            <div class="navbar-title"><h1>Perfil</h1></div>
+            <div class="user-info"><span class="user-greeting" id="userGreeting">Olá, Visitante</span><div class="user-avatar" id="userAvatar">U</div></div>
+        </div>
+
+        <div class="container">
+            <div class="profile-cover">
+                <div class="profile-avatar">🎭</div>
+                <div class="profile-name" id="profileNome">Carregando...</div>
+                <div class="profile-email" id="profileEmail"></div>
+                <div style="margin-top: 0.5rem;"><span class="badge-membro" id="profileTipoBadge">MEMBRO</span></div>
+                <div class="profile-stats"><div class="profile-stat"><div class="profile-stat-value" id="totalEventos">0</div><div class="profile-stat-label">Eventos</div></div><div class="profile-stat"><div class="profile-stat-value" id="totalInscricoes">0</div><div class="profile-stat-label">Inscrições</div></div><div class="profile-stat"><div class="profile-stat-value" id="mediaNotas">0.0</div><div class="profile-stat-label">Média</div></div><div class="profile-stat"><div class="profile-stat-value" id="melhorPosicao">-</div><div class="profile-stat-label">Melhor Posição</div></div></div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card"><div class="info-card-title">Informações Pessoais<button class="btn-outline" onclick="abrirModalEditar()">Editar</button></div><div class="info-row"><div class="info-label">Nome</div><div class="info-value" id="infoNome">-</div></div><div class="info-row"><div class="info-label">Email</div><div class="info-value" id="infoEmail">-</div></div><div class="info-row"><div class="info-label">Contacto</div><div class="info-value" id="infoContacto">-</div></div><div class="info-row"><div class="info-label">Membro desde</div><div class="info-value" id="infoDataRegistro">-</div></div></div>
+                <div class="info-card"><div class="info-card-title">Informações Artísticas</div><div class="info-row"><div class="info-label">Área/Especialidade</div><div class="info-value" id="areaArtistica">-</div></div><div class="progress-section"><div class="progress-item"><div class="progress-header"><span>Nível de Participação</span><span id="nivelParticipacao">0%</span></div><div class="progress-bar"><div class="progress-fill" id="progressParticipacao" style="width:0%"></div></div></div><div class="progress-item"><div class="progress-header"><span>Desempenho</span><span id="nivelDesempenho">0%</span></div><div class="progress-bar"><div class="progress-fill" id="progressDesempenho" style="width:0%"></div></div></div></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalEditar" class="modal"><div class="modal-content"><div class="modal-header"><h3>Editar Perfil</h3><button class="modal-close" onclick="fecharModalEditar()">&times;</button></div><form id="editarForm"><div class="input-group"><label>Nome</label><input type="text" id="editNome" required></div><div class="input-group"><label>Email</label><input type="email" id="editEmail" required></div><div class="input-group"><label>Contacto</label><input type="text" id="editContacto"></div><div class="input-group"><label>Nova Senha</label><input type="password" id="editSenha" placeholder="Deixe em branco para manter"></div><div class="modal-footer"><button type="button" class="btn-outline" onclick="fecharModalEditar()">Cancelar</button><button type="submit" class="btn-primary">Salvar</button></div></form></div></div>
+
+    <script src="js/api.js"></script>
+    <script>
+        let userData=null;
+        function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); }
+        function mostrarToast(msg,tipo){ const t=document.createElement('div'); t.className='toast'; t.textContent=msg; t.style.background=tipo==='success'?'#22C55E':'#EF4444'; document.body.appendChild(t); setTimeout(()=>t.remove(),3000); }
+        async function carregarPerfil(){ try{ const user=JSON.parse(localStorage.getItem('user')||'{}'); const usuarios=await api.getUsuarios(); userData=usuarios.find(u=>u.id===user.id)||user; document.getElementById('profileNome').textContent=userData.nombre||userData.nome||'Usuário'; document.getElementById('profileEmail').textContent=userData.email||''; document.getElementById('infoNome').textContent=userData.nome||'-'; document.getElementById('infoEmail').textContent=userData.email||'-'; document.getElementById('infoContacto').textContent=userData.contacto||'Não informado'; document.getElementById('infoDataRegistro').textContent=userData.dataRegistro?new Date(userData.dataRegistro).toLocaleDateString('pt-BR'):'--/--/----'; document.getElementById('areaArtistica').textContent=userData.areaArtistica||userData.especialidade||'Não definida'; const inscricoes=await api.getInscricoes(); const membros=await api.getMembros(); const membro=membros.find(m=>m.usuario?.id===userData.id); let inscricoesMembro=[]; if(membro) inscricoesMembro=await api.getInscricoesPorMembro(membro.id); document.getElementById('totalEventos').textContent=inscricoesMembro.length; document.getElementById('totalInscricoes').textContent=inscricoesMembro.length; let somaNotas=0,countNotas=0; for(const insc of inscricoesMembro){ const avs=await api.getAvaliacoesPorInscricao(insc.idInscricao); avs.forEach(av=>{ somaNotas+=av.nota; countNotas++; }); } const media=countNotas>0?(somaNotas/countNotas).toFixed(1):'0.0'; document.getElementById('mediaNotas').textContent=media; const participacaoPercent=Math.min((inscricoesMembro.length/10)*100,100); document.getElementById('nivelParticipacao').textContent=`${Math.floor(participacaoPercent)}%`; document.getElementById('progressParticipacao').style.width=`${participacaoPercent}%`; const desempenhoPercent=Math.min((parseFloat(media)/10)*100,100); document.getElementById('nivelDesempenho').textContent=`${Math.floor(desempenhoPercent)}%`; document.getElementById('progressDesempenho').style.width=`${desempenhoPercent}%`; }catch(e){ console.error(e); } }
+        function abrirModalEditar(){ document.getElementById('editNome').value=userData?.nome||''; document.getElementById('editEmail').value=userData?.email||''; document.getElementById('editContacto').value=userData?.contacto||''; document.getElementById('modalEditar').style.display='flex'; }
+        function fecharModalEditar(){ document.getElementById('modalEditar').style.display='none'; }
+        document.getElementById('editarForm').addEventListener('submit',async(e)=>{ e.preventDefault(); const dados={ nome:document.getElementById('editNome').value, email:document.getElementById('editEmail').value, contacto:document.getElementById('editContacto').value }; const senha=document.getElementById('editSenha').value; if(senha) dados.senha=senha; await api.atualizarUsuario(userData.id,dados); mostrarToast('Perfil atualizado!'); fecharModalEditar(); carregarPerfil(); const userStorage=JSON.parse(localStorage.getItem('user')||'{}'); userStorage.nome=dados.nome; userStorage.email=dados.email; localStorage.setItem('user',JSON.stringify(userStorage)); });
+        const user=JSON.parse(localStorage.getItem('user')||'{}'); document.getElementById('userGreeting').innerHTML=`Olá, ${user.nome?.split(' ')[0]||'Visitante'}`; document.getElementById('userAvatar').textContent=(user.nome?.charAt(0)||'U').toUpperCase();
+        carregarPerfil();
+    </script>
+</body>
+</html>

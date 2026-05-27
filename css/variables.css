@@ -1,0 +1,66 @@
+/* CLC System - Design System */
+
+:root {
+    /* Cores Primárias CLC */
+    --clc-purple-50: #F5F3FF;
+    --clc-purple-100: #EDE9FE;
+    --clc-purple-200: #DDD6FE;
+    --clc-purple-300: #C4B5FD;
+    --clc-purple-400: #A78BFA;
+    --clc-purple-500: #8B5CF6;
+    --clc-purple-600: #7C3AED;
+    --clc-purple-700: #6D28D9;
+    --clc-purple-800: #5B21B6;
+    --clc-purple-900: #4C1D95;
+    
+    --clc-pink-500: #EC4899;
+    --clc-pink-600: #DB2777;
+    
+    /* Gradientes Oficiais */
+    --gradient-primary: linear-gradient(135deg, var(--clc-purple-600) 0%, var(--clc-pink-500) 100%);
+    --gradient-dark: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+    --gradient-success: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    
+    /* Cores de Fundo */
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F8FAFC;
+    --bg-tertiary: #F1F5F9;
+    --bg-dark: #0F172A;
+    
+    /* Cores de Texto */
+    --text-primary: #1E293B;
+    --text-secondary: #475569;
+    --text-tertiary: #94A3B8;
+    --text-inverse: #FFFFFF;
+    
+    /* Sombras */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    
+    /* Border Radius */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+    --radius-2xl: 2rem;
+    
+    /* Transições */
+    --transition-fast: 150ms;
+    --transition-base: 300ms;
+    --transition-slow: 500ms;
+    
+    /* Espaçamentos */
+    --spacing-1: 0.25rem;
+    --spacing-2: 0.5rem;
+    --spacing-3: 0.75rem;
+    --spacing-4: 1rem;
+    --spacing-5: 1.25rem;
+    --spacing-6: 1.5rem;
+    --spacing-8: 2rem;
+    --spacing-10: 2.5rem;
+    --spacing-12: 3rem;
+}
